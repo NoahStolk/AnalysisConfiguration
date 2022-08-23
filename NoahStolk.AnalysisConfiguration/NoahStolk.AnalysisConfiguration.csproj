@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Package information">
+		<Authors>Noah Stolk</Authors>
+		<Copyright>Copyright © Noah Stolk</Copyright>
+		<PackageId>NoahStolk.OpenAlBindings</PackageId>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/NoahStolk/AnalysisConfiguration</RepositoryUrl>
+		<Version>0.0.0</Version>
+		<IsPackable>true</IsPackable>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<IncludeSource>true</IncludeSource>
+		<NoDefaultExcludes>true</NoDefaultExcludes>
+	</PropertyGroup>
+
+	<Target Name="CreateEditorConfig" BeforeTargets="BeforeBuild">
+		<ItemGroup>
+			<EditorConfigFilesToJoin Include=".editorconfig;CSharp.editorconfig;Roslynator.editorconfig;SonarAnalyzers.editorconfig;StyleCopAnalyzers.editorconfig"/>
+		</ItemGroup>
+		<ItemGroup>
+			<EditorConfigFileContents Include="$([System.IO.File]::ReadAllText(%(EditorConfigFilesToJoin.Identity)))"/>
+		</ItemGroup>
+		<WriteLinesToFile File="Generated\.editorconfig" Lines="@(EditorConfigFileContents)" Overwrite="true"/>
+	</Target>
+
+	<ItemGroup>
+		<Content Include="Generated\.editorconfig" Pack="true" PackagePath="content\Rules"/>
+	</ItemGroup>
+
+</Project>
