@@ -1,0 +1,26 @@
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - name: Set up dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.400'
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build
+      run: dotnet build AnalysisConfiguration.sln -c Release
+    - name: Pack
+      run: dotnet pack NoahStolk.AnalysisConfiguration -c Release --no-build -o .
+    - name: Push
+      run: dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k ${NUGET_SECRET} -n --skip-duplicate
+      env:
+        NUGET_SECRET: ${{ secrets.NUGET_SECRET }}
